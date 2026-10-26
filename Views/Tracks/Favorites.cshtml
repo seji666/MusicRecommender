@@ -1,0 +1,34 @@
+@model List<FavoriteTrack>
+@{
+    ViewData["Title"] = "Любими";
+}
+<h2 class="h4 mb-3">♥ Любими песни</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">Все още нямате любими песни. Добавете от <a asp-action="Search">търсенето</a> или от <a asp-controller="Home" asp-action="Index">топ класацията</a>.</div>
+}
+else
+{
+    <table class="table align-middle">
+        <thead><tr><th></th><th>Песен</th><th>Изпълнител</th><th>Откъс</th><th>Добавена</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var f in Model)
+        {
+            <tr>
+                <td>@if (!string.IsNullOrEmpty(f.CoverUrl)) { <img src="@f.CoverUrl" width="48" height="48" class="rounded" alt="" /> }</td>
+                <td>@f.Title</td>
+                <td>@f.Artist</td>
+                <td>@if (!string.IsNullOrEmpty(f.PreviewUrl)) { <audio controls preload="none" src="@f.PreviewUrl" style="height:32px"></audio> }</td>
+                <td>@f.AddedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                <td>
+                    <form asp-action="Remove" method="post">
+                        <input type="hidden" name="id" value="@f.Id" />
+                        <button class="btn btn-sm btn-outline-danger">Премахни</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

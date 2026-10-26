@@ -1,0 +1,37 @@
+@model TrackDto
+@{
+    var showAdd = ViewData["ShowAdd"] as bool? ?? false;
+}
+<div class="card h-100 shadow-sm">
+    @if (!string.IsNullOrEmpty(Model.CoverUrl))
+    {
+        <img src="@Model.CoverUrl" class="card-img-top" alt="@Model.Title" />
+    }
+    <div class="card-body">
+        <h6 class="card-title mb-1">@Model.Title</h6>
+        <div class="text-muted small">@Model.Artist @(string.IsNullOrEmpty(Model.Album) ? "" : "· " + Model.Album)</div>
+        @if (!string.IsNullOrEmpty(Model.PreviewUrl))
+        {
+            <audio controls preload="none" class="w-100 mt-2" src="@Model.PreviewUrl"></audio>
+        }
+    </div>
+    <div class="card-footer d-flex align-items-center">
+        @if (!string.IsNullOrEmpty(Model.Link))
+        {
+            <a href="@Model.Link" target="_blank" rel="noopener" class="small">Deezer ↗</a>
+        }
+        @if (showAdd)
+        {
+            <form asp-controller="Tracks" asp-action="Add" method="post" class="ajax-add ms-auto">
+                <input type="hidden" name="DeezerId" value="@Model.DeezerId" />
+                <input type="hidden" name="Title" value="@Model.Title" />
+                <input type="hidden" name="Artist" value="@Model.Artist" />
+                <input type="hidden" name="Album" value="@Model.Album" />
+                <input type="hidden" name="CoverUrl" value="@Model.CoverUrl" />
+                <input type="hidden" name="PreviewUrl" value="@Model.PreviewUrl" />
+                <input type="hidden" name="Link" value="@Model.Link" />
+                <button type="submit" class="btn btn-sm btn-outline-primary">♥ Добави</button>
+            </form>
+        }
+    </div>
+</div>

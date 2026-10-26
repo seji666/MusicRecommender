@@ -1,0 +1,27 @@
+@model List<HistoryItem>
+@{
+    ViewData["Title"] = "История";
+}
+<h2 class="h4 mb-3">🕑 История на препоръките</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">Все още няма направени препоръки. <a asp-action="Index">Направете първата.</a></div>
+}
+
+@foreach (var h in Model)
+{
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>@h.Record.Mood</strong>
+            @if (!string.IsNullOrWhiteSpace(h.Record.Genre)) { <span class="badge bg-secondary ms-2">@h.Record.Genre</span> }
+            <span class="text-muted small float-end">@h.Record.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</span>
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var s in h.Suggestions)
+            {
+                <li class="list-group-item"><strong>@s.Artist — @s.Title</strong><br /><span class="small text-muted">@s.Reason</span></li>
+            }
+        </ul>
+    </div>
+}

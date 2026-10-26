@@ -1,0 +1,62 @@
+@model RecommendationViewModel
+@{
+    ViewData["Title"] = "AI препоръки";
+}
+<h2 class="h4 mb-3">🤖 AI препоръки</h2>
+
+<form asp-action="Index" method="post" class="row g-3 mb-4">
+    <div class="col-md-6">
+        <label asp-for="Request.Mood" class="form-label"></label>
+        <input asp-for="Request.Mood" class="form-control" placeholder="напр. тренировка, дъждовна вечер, пътуване" />
+        <span asp-validation-for="Request.Mood" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Request.Genre" class="form-label"></label>
+        <input asp-for="Request.Genre" class="form-control" placeholder="напр. rock, jazz, pop" />
+    </div>
+    <div class="col-md-2">
+        <label asp-for="Request.Count" class="form-label"></label>
+        <input asp-for="Request.Count" type="number" min="3" max="10" class="form-control" />
+        <span asp-validation-for="Request.Count" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Request.Details" class="form-label"></label>
+        <textarea asp-for="Request.Details" rows="2" class="form-control" placeholder="напр. без текст, български изпълнители, 90-те..."></textarea>
+        <span asp-validation-for="Request.Details" class="text-danger"></span>
+    </div>
+    <div class="col-12 form-check ms-2">
+        <input asp-for="Request.UseFavorites" class="form-check-input" />
+        <label asp-for="Request.UseFavorites" class="form-check-label"></label>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" id="submitBtn">Препоръчай</button>
+        <span class="text-muted small ms-2">Генерирането може да отнеме няколко секунди.</span>
+    </div>
+</form>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+
+@if (Model.Results is { Count: > 0 })
+{
+    <h3 class="h5 mb-3">Препоръчани песни</h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        @foreach (var item in Model.Results)
+        {
+            <div class="col">
+                <p class="mb-1"><strong>@item.Suggestion.Artist — @item.Suggestion.Title</strong></p>
+                <p class="small text-muted">@item.Suggestion.Reason</p>
+                @if (item.Track != null)
+                {
+                    <partial name="_TrackCard" model="item.Track" view-data='new ViewDataDictionary(ViewData) { { "ShowAdd", true } }' />
+                }
+                else
+                {
+                    <div class="alert alert-secondary small">Песента не е намерена в Deezer.</div>
+                }
+            </div>
+        }
+    </div>
+}
